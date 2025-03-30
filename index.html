@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt vé xem phim</title>
+</head>
+<body>
+    <h1>🎬 Danh sách phim</h1>
+    <ul id="movies"></ul>
+
+    <h2>Đặt vé</h2>
+    <input type="text" id="username" placeholder="Nhập tên bạn">
+    <button id="bookButton">Đặt vé Avengers</button>
+
+    <script>
+        // Lấy danh sách phim từ API
+        fetch("http://localhost:3000/movies")
+            .then(response => response.json())
+            .then(data => {
+                let movieList = document.getElementById("movies");
+                data.forEach(movie => {
+                    let li = document.createElement("li");
+                    li.textContent = `${movie.title} - Còn ${movie.seats} vé`;
+                    movieList.appendChild(li);
+                });
+            });
+
+        // Gửi yêu cầu đặt vé
+        document.getElementById("bookButton").addEventListener("click", () => {
+            let username = document.getElementById("username").value;
+            if (!username) return alert("Vui lòng nhập tên!");
+
+            fetch("http://localhost:3000/bookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ movieId: 1, user: username }) // Đặt vé phim Avengers
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => alert("Lỗi đặt vé!"));
+        });
+    </script>
+</body>
+</html>
